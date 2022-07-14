@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id"
+        content="924524534896-k6es6g7ne1tegoa0qc542vlombulcbvi.apps.googleusercontent.com">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mb-5">
+        <h3 class="mb-3">Login</h3>
+        <input type="text" placeholder="Username" id="userInp" class="form-control mb-3">
+        <input type="password" placeholder="Password" id="passInp" class="form-control mb-3">
+        <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input" id="customSwitch1">
+            <label class="custom-control-label" for="customSwitch1">Keep me Logged In</label>
+        </div>
+        <a href="home.html" cid="sub_btn" class="btn w-100 btn-outline-primary mb-3">Login</a> <br>
+        <div class="g-signin2" data-width="300" data-height="50" data-longtitle="true"></div><br>
+        <a href="register.html" class="badge badge-secondary py-1 w-100">Want to Create A New Account?</a>
+    </div>
+
+
+    <script type="module">
+        //-----------------------FIREBASE CONFIG-------------------------------------------------------------------//
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrOWxDfp40UtTrezowk8q4Er_ygvl2rjc",
+            authDomain: "test-techinal.firebaseapp.com",
+            projectId: "test-techinal",
+            databaseURL: "https://test-techinal-default-rtdb.firebaseio.com",
+            storageBucket: "test-techinal.appspot.com",
+            messagingSenderId: "595986684748",
+            appId: "1:595986684748:web:6935cb14d4a99c7ec5cde9",
+            measurementId: "G-RGL9YPCPHN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        import { getDatabase, ref, set, child, get }
+            from "https://www.gstatic.com/firebasejs/9.6.6/firebase-database.js";
+
+        const db = getDatabase();
+
+        //------------------------------THE REFRENECES---------------------------------------------------------------------//
+
+        const username = document.getElementById('userInp');
+        const pass = document.getElementById('passInp');
+        const submit = document.getElementById('sub_btn');
+
+        //------------------------------AUTHENTICATION PROCESS-------------------------------------------------------------//          
+
+        function AuthenticateUser() {
+            const dbref = ref(db);
+
+            get(child(dbref, "UsersList/" + username.value)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert()
+                    let dbpass = pass.value
+                    console.log(dbpass);
+                    console.log(pass.value);
+                    if (dbpass == pass.value) {
+                        // login(snapshot.val());
+                        alert("home");
+                    }
+
+                    else {
+                        alert("username or password is invalid");
+                    }
+
+                }
+
+                else {
+                    alert("username or password is invalid");
+                }
+            });
+        }
+
+        //------------------------------DECRIPTION-------------------------------------------------------------------------//    
+
+        function decPass(dbpass) {
+            var pass12 = CryptoJS.AES.decrypt(dbpass, pass.value);
+            return pass12.toString(CryptoJS.enc.utf8);
+        }
+
+        //---------------------------------GOOGLE SIGN-IN---------------------------------------------------------------//
+
+        function onSuccess(googleUser) {
+            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+        }
+        function onFailure(error) {
+            console.log(error);
+        }
+        function renderButton() {
+            gapi.signin2.render('my-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure
+            });
+        }
+
+
+        //---------------------------------ASSIGN THE EVENTS---------------------------------------------------------------//
+
+        submit.addEventListener('click', AuthenticateUser);
+
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</body>
+
+</html>
